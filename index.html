@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interactive real estate sources and uses calculator." />
+  <title>Sources &amp; Uses Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css?v=3" />
+</head>
+<body>
+  <main class="layout">
+    <section class="card">
+      <header class="main-head">
+        <p class="eyebrow">Real Estate Analysis</p>
+        <h1>Sources &amp; Uses</h1>
+        <p class="intro">Build a complete project budget and see how the capital stack balances in real time.</p>
+      </header>
+
+      <section class="subsection details-section">
+        <h2>Your Details</h2>
+        <div class="field-grid">
+          <label>
+            Full Name
+            <input id="fullName" type="text" placeholder="John Doe" autocomplete="name" />
+          </label>
+          <label>
+            Email Address
+            <input id="email" type="email" placeholder="john@email.com" autocomplete="email" />
+          </label>
+        </div>
+      </section>
+
+      <section class="subsection project-section">
+        <h2>Project Inputs</h2>
+        <div class="project-grid">
+          <label>
+            Number of Units
+            <input id="numberOfUnits" type="number" min="0" step="1" value="0" inputmode="numeric" />
+          </label>
+        </div>
+      </section>
+
+      <section class="subsection">
+        <h2>Uses</h2>
+        <div class="table-wrap">
+          <table class="analysis-table uses-table">
+            <thead>
+              <tr>
+                <th>Use</th>
+                <th>Dollar Amount</th>
+                <th>Cost per Unit</th>
+                <th>% Allocation</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="usesBody"></tbody>
+            <tfoot>
+              <tr class="totals-row">
+                <th>Total Uses</th>
+                <td id="totalUses">$0</td>
+                <td id="totalCostPerUnit">$0</td>
+                <td id="totalAllocation">0.0%</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section class="subsection">
+        <h2>Sources</h2>
+        <p class="section-note">Capital raise needed automatically fills the gap between total uses and debt sources.</p>
+        <div class="table-wrap">
+          <table class="analysis-table sources-table">
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Dollar Amount</th>
+                <th>Loan to Cost</th>
+                <th>Loan to Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Capital Raise Needed</th>
+                <td class="calculated emphasis" id="capitalRaise">$0</td>
+                <td class="calculated" id="capitalRaiseLtc">0.0%</td>
+                <td class="calculated" id="capitalRaiseLtv">0.0%</td>
+              </tr>
+              <tr>
+                <th scope="row">Loan</th>
+                <td class="input-cell"><span class="currency-prefix">$</span><input id="loan" type="number" min="0" step="1000" value="0" inputmode="decimal" aria-label="Loan dollar amount" /></td>
+                <td class="calculated" id="loanLtc">0.0%</td>
+                <td class="calculated" id="loanLtv">0.0%</td>
+              </tr>
+              <tr>
+                <th scope="row">Other Loan Source</th>
+                <td class="input-cell"><span class="currency-prefix">$</span><input id="otherLoan" type="number" min="0" step="1000" value="0" inputmode="decimal" aria-label="Other loan source dollar amount" /></td>
+                <td class="calculated" id="otherLoanLtc">0.0%</td>
+                <td class="calculated" id="otherLoanLtv">0.0%</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="totals-row">
+                <th>Total Sources</th>
+                <td id="totalSources">$0</td>
+                <td id="totalSourcesLtc">0.0%</td>
+                <td id="totalSourcesLtv">0.0%</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section class="summary-card" aria-live="polite">
+        <h2>Summary</h2>
+        <div class="summary-grid">
+          <div>
+            <p>Total Project Uses</p>
+            <strong id="summaryUses">$0</strong>
+          </div>
+          <div>
+            <p>Capital Raise Needed</p>
+            <strong id="summaryCapital">$0</strong>
+          </div>
+          <div>
+            <p>Total Debt</p>
+            <strong id="summaryDebt">$0</strong>
+          </div>
+          <div>
+            <p>Blended Loan to Cost</p>
+            <strong id="summaryLtc">0.0%</strong>
+          </div>
+        </div>
+        <p class="balance-message" id="balanceMessage">Sources and uses are balanced.</p>
+        <div class="actions">
+          <button id="downloadPdf" type="button">Download PDF</button>
+          <p id="downloadStatus" role="status"></p>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script src="./app.js?v=3"></script>
+</body>
+</html>
