@@ -8,13 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=3" />
+  <link rel="stylesheet" href="./styles.css?v=5" />
 </head>
 <body>
   <main class="layout">
     <section class="card">
       <header class="main-head">
-        <p class="eyebrow">Real Estate Analysis</p>
         <h1>Sources &amp; Uses</h1>
         <p class="intro">Build a complete project budget and see how the capital stack balances in real time.</p>
       </header>
@@ -38,7 +37,14 @@
         <div class="project-grid">
           <label>
             Number of Units
-            <input id="numberOfUnits" type="number" min="0" step="1" value="0" inputmode="numeric" />
+            <input id="numberOfUnits" type="text" value="0" inputmode="numeric" data-numeric />
+          </label>
+          <label>
+            Recent Appraised Value
+            <span class="standalone-currency-input">
+              <span class="currency-prefix">$</span>
+              <input id="appraisedValue" type="text" value="0" inputmode="numeric" data-numeric />
+            </span>
           </label>
         </div>
       </section>
@@ -92,13 +98,13 @@
               </tr>
               <tr>
                 <th scope="row">Loan</th>
-                <td class="input-cell"><span class="currency-prefix">$</span><input id="loan" type="number" min="0" step="1000" value="0" inputmode="decimal" aria-label="Loan dollar amount" /></td>
+                <td class="input-cell"><span class="currency-prefix">$</span><input id="loan" type="text" value="0" inputmode="numeric" data-numeric aria-label="Loan dollar amount" /></td>
                 <td class="calculated" id="loanLtc">0.0%</td>
                 <td class="calculated" id="loanLtv">0.0%</td>
               </tr>
               <tr>
                 <th scope="row">Other Loan Source</th>
-                <td class="input-cell"><span class="currency-prefix">$</span><input id="otherLoan" type="number" min="0" step="1000" value="0" inputmode="decimal" aria-label="Other loan source dollar amount" /></td>
+                <td class="input-cell"><span class="currency-prefix">$</span><input id="otherLoan" type="text" value="0" inputmode="numeric" data-numeric aria-label="Other loan source dollar amount" /></td>
                 <td class="calculated" id="otherLoanLtc">0.0%</td>
                 <td class="calculated" id="otherLoanLtv">0.0%</td>
               </tr>
@@ -143,6 +149,6 @@
       </section>
     </section>
   </main>
-  <script src="./app.js?v=3"></script>
+  <script src="./app.js?v=5"></script>
 </body>
 </html>

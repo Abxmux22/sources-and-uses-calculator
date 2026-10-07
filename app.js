@@ -13,8 +13,13 @@ const USES = [
 const usesBody = document.getElementById("usesBody");
 
 function numeric(value) {
-  const parsed = Number(value);
+  const parsed = Number(String(value).replace(/,/g, ""));
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+}
+
+function formatNumericInput(input) {
+  const digits = input.value.replace(/\D/g, "");
+  input.value = digits ? Number(digits).toLocaleString("en-US") : "";
 }
 
 function money(value, decimals = 0) {
@@ -34,7 +39,7 @@ function renderUses() {
   usesBody.innerHTML = USES.map((item) => `
     <tr data-use="${item.key}">
       <th scope="row">${item.label}</th>
-      <td class="input-cell"><span class="currency-prefix">$</span><input data-field="amount" type="number" min="0" step="1000" value="0" inputmode="decimal" aria-label="${item.label} dollar amount" /></td>
+      <td class="input-cell"><span class="currency-prefix">$</span><input data-field="amount" type="text" value="0" inputmode="numeric" data-numeric aria-label="${item.label} dollar amount" /></td>
       <td class="calculated" data-output="costPerUnit">$0</td>
       <td class="calculated" data-output="allocation">0.0%</td>
       <td class="note-cell">${item.note}</td>
@@ -44,10 +49,10 @@ function renderUses() {
 
 function calculate() {
   const numberOfUnits = numeric(document.getElementById("numberOfUnits").value);
+  const appraisedValue = numeric(document.getElementById("appraisedValue").value);
   const rows = [...usesBody.querySelectorAll("tr")];
   const amounts = rows.map((row) => numeric(row.querySelector('[data-field="amount"]').value));
   const totalUses = amounts.reduce((sum, amount) => sum + amount, 0);
-  const purchasePrice = amounts[0] || 0;
 
   rows.forEach((row, index) => {
     row.querySelector('[data-output="costPerUnit"]').textContent = money(numberOfUnits ? amounts[index] / numberOfUnits : 0);
@@ -60,7 +65,7 @@ function calculate() {
   const capitalRaise = totalUses - totalDebt;
   const totalSources = capitalRaise + totalDebt;
   const ltcDenominator = totalUses || 0;
-  const ltvDenominator = purchasePrice || 0;
+  const ltvDenominator = appraisedValue || 0;
 
   const sourceValues = {
     capitalRaise: Math.max(capitalRaise, 0),
@@ -95,7 +100,7 @@ function calculate() {
     balanceMessage.style.color = "#3f6c47";
   }
 
-  return { numberOfUnits, amounts, totalUses, purchasePrice, loan, otherLoan, totalDebt, capitalRaise, totalSources };
+  return { numberOfUnits, appraisedValue, amounts, totalUses, loan, otherLoan, totalDebt, capitalRaise, totalSources };
 }
 
 function pdfEscape(value) {
@@ -125,8 +130,9 @@ async function createPdf() {
   stream += "0.39 0.45 0.55 rg\n" + pdfText(`Prepared for: ${name}`, left, 720, 9) + pdfText(`Email: ${email}`, left, 706, 9);
   stream += pdfText(`Generated: ${new Date().toLocaleDateString("en-US")}`, left, 692, 9);
   stream += "0.06 0.09 0.16 rg\n" + pdfText(`Number of Units: ${data.numberOfUnits.toLocaleString("en-US")}`, left, 666, 10, "F2");
+  stream += pdfText(`Recent Appraised Value: ${money(data.appraisedValue)}`, left, 650, 10, "F2");
 
-  const usesTop = 630;
+  const usesTop = 612;
   const usesWidths = [174, 102, 102, 86, 64];
   const usesHeaders = ["USES", "DOLLAR AMOUNT", "COST / UNIT", "% ALLOC.", "NOTES"];
   stream += `0.95 0.96 0.98 rg\n${left} ${usesTop} ${tableWidth} ${rowHeight} re f\n`;
@@ -195,13 +201,13 @@ async function createPdf() {
     stream += pdfText(label, left + 4, y, 8, "F2");
     stream += pdfText(money(value), left + sourceWidths[0] + 4, y, 8);
     stream += pdfText(percent(data.totalUses ? value / data.totalUses : 0), left + sourceWidths[0] + sourceWidths[1] + 4, y, 8);
-    stream += pdfText(percent(data.purchasePrice ? value / data.purchasePrice : 0), left + sourceWidths[0] + sourceWidths[1] + sourceWidths[2] + 4, y, 8);
+    stream += pdfText(percent(data.appraisedValue ? value / data.appraisedValue : 0), left + sourceWidths[0] + sourceWidths[1] + sourceWidths[2] + 4, y, 8);
   });
   const sourceTotalY = sourcesTop - 15 - sourceRows.length * rowHeight;
   stream += pdfText("TOTAL SOURCES", left + 4, sourceTotalY, 8, "F2");
   stream += pdfText(money(data.totalSources), left + sourceWidths[0] + 4, sourceTotalY, 8, "F2");
   stream += pdfText(percent(data.totalUses ? data.totalSources / data.totalUses : 0), left + sourceWidths[0] + sourceWidths[1] + 4, sourceTotalY, 8, "F2");
-  stream += pdfText(percent(data.purchasePrice ? data.totalSources / data.purchasePrice : 0), left + sourceWidths[0] + sourceWidths[1] + sourceWidths[2] + 4, sourceTotalY, 8, "F2");
+  stream += pdfText(percent(data.appraisedValue ? data.totalSources / data.appraisedValue : 0), left + sourceWidths[0] + sourceWidths[1] + sourceWidths[2] + 4, sourceTotalY, 8, "F2");
 
   stream += "0.22 0.36 0.24 rg\n" + pdfText(`Blended Loan to Cost: ${percent(data.totalUses ? data.totalDebt / data.totalUses : 0)}`, left, 74, 10, "F2");
   stream += "0.39 0.45 0.55 rg\n" + pdfText("Capital raise automatically balances total uses less loan sources.", left, 56, 8);
@@ -275,11 +281,11 @@ async function downloadPdf() {
 }
 
 function handleFocus(event) {
-  if (event.target.matches('input[type="number"]') && numeric(event.target.value) === 0) event.target.value = "";
+  if (event.target.matches("[data-numeric]") && numeric(event.target.value) === 0) event.target.value = "";
 }
 
 function handleBlur(event) {
-  if (event.target.matches('input[type="number"]') && event.target.value.trim() === "") {
+  if (event.target.matches("[data-numeric]") && event.target.value.trim() === "") {
     event.target.value = "0";
     calculate();
   }
@@ -287,7 +293,10 @@ function handleBlur(event) {
 
 renderUses();
 document.addEventListener("input", (event) => {
-  if (event.target.matches('input[type="number"]')) calculate();
+  if (event.target.matches("[data-numeric]")) {
+    formatNumericInput(event.target);
+    calculate();
+  }
 });
 document.addEventListener("focusin", handleFocus);
 document.addEventListener("focusout", handleBlur);

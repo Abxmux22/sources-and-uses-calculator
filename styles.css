@@ -45,16 +45,6 @@ h1, h2 {
 h1 { font-size: clamp(2.15rem, 5vw, 3rem); font-weight: 600; }
 h2 { font-size: clamp(1.7rem, 3vw, 2.05rem); font-weight: 500; }
 
-.eyebrow {
-  margin: 0 0 3px;
-  color: #5b755e;
-  font-size: .72rem;
-  font-weight: 800;
-  letter-spacing: .16em;
-  text-align: center;
-  text-transform: uppercase;
-}
-
 .intro, .section-note {
   margin: 4px auto 0;
   color: var(--muted);
@@ -86,10 +76,18 @@ h2 { font-size: clamp(1.7rem, 3vw, 2.05rem); font-weight: 500; }
 }
 
 .project-grid {
-  width: min(430px, 100%);
+  width: 100%;
   margin-inline: auto;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+
+.standalone-currency-input {
+  position: relative;
+  display: block;
+}
+
+.standalone-currency-input input { padding-left: 25px; }
+.standalone-currency-input .currency-prefix { left: 11px; }
 
 label {
   display: grid;
